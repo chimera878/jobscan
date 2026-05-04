@@ -31,7 +31,8 @@ The goal is not deeper analysis, but faster triage: surface what’s worth readi
 
 Built for candidates casting a wide net, jobscan aggregates roles from multiple sources, filters early, and scores fit against your CV. It monitors a customised set of companies and pulls roles directly from their job boards.
 
-This project is inspired by [career-ops](https://github.com/santifer/career-ops), but takes a different approach — prioritising broad scanning and minimal evaluation over detailed per-role analysis.
+This project builds on ideas from [career-ops](https://github.com/santifer/career-ops), particularly the multi-source scanning and ATS parsing structure. jobscan diverges in design by prioritising broader job discovery, more aggressive pre-filtering, and minimal per-role evaluation (single Yes/No decision).
+
 For me, 3 hours of manual browsing becomes ~20 minutes of focused review.
 
 **Scope note:** Adzuna, aijobs.net, and ATS sources are multi-region. Reed API is UK-only.  

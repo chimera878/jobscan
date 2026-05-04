@@ -1,0 +1,10 @@
+node_modules/
+__pycache__/
+.DS_Store
+
+# Personal data — never commit these
+cv.md
+portals.yml
+pipeline.md
+scan-history.tsv
+.claude/settings.local.json

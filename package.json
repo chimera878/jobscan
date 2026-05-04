@@ -1,0 +1,14 @@
+{
+  "name": "jobscan",
+  "version": "1.0.0",
+  "description": "Zero-token job scanner with Claude-powered evaluation for AI/ML roles",
+  "type": "module",
+  "scripts": {
+    "scan": "node scan.mjs",
+    "scan:dry": "node scan.mjs --dry-run",
+    "scan:verbose": "node scan.mjs --verbose"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

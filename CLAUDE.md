@@ -65,6 +65,6 @@ The system has two layers:
 
 Type `/init` to run the setup (configures cv.md, portals.yml, query calibration).
 Type `/eval` to score pending jobs in pipeline.md against your CV.
-Type `/scan` to scan jobs in tracked companies listed in portals.yml, and search jobs listed publically in Greenhouse / Ashby / Lever.
+Type `/scan` to scan jobs in tracked companies listed in portals.yml.
 
 These skills load on demand — they are not loaded in every session.

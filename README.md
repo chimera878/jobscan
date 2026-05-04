@@ -49,6 +49,10 @@ This project has not been validated across all markets — coverage and behaviou
 
 ## Quick Start
 ```bash
+# 0. Clone and install
+git clone https://github.com/chimera878/jobscan.git
+cd jobscan
+
 # 1. Install dependencies
 npm install && pip install pyyaml
 
@@ -64,12 +68,12 @@ pandoc cv.pdf  -o cv.md             # from PDF
 # 4. Run setup — open Claude Code in this directory, then:
 claude                              # open Claude Code in this directory
 /init                               # first-time setup, or re-run to reconfigure
-# /init, /scan and /eval must run in Claude Code
+# NOTE: /init, /scan and /eval must be run inside Claude Code
 # writes search queries into portals.yml and resolves companies to job board URLs
 
 # 5. Scan for jobs
-node scan.mjs                       # zero-token: hits Adzuna, Reed and aijobs.net
-/scan                               # fetch jobs from tracked companies
+node scan.mjs                       # zero-token scan: APIs and ATS
+/scan                               # optional: company-specific scan via Claude WebSearch (uses tokens)
 # max_age_days defaults to 5 in portals.yml (fetch jobs posted in last 5 days)
 
 # 6. Evaluate listings
@@ -77,7 +81,7 @@ node scan.mjs                       # zero-token: hits Adzuna, Reed and aijobs.n
 # above threshold → Active | below → Done | unresolvable → Unresolvable
 # score_threshold defaults to 3.5 in portals.yml
 ```
-Run `node scan.mjs`, `/scan`, or both before running `/eval`. Both scan commands write to `pipeline.md`.
+Run at least one scan (`node scan.mjs` or `/scan`) before `/eval`.
 ## File structure
 
 ```

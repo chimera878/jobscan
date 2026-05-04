@@ -31,7 +31,7 @@ The goal is not deeper analysis, but faster triage: surface what’s worth readi
 
 Built for candidates casting a wide net, jobscan aggregates roles from multiple sources, filters early, and scores fit against your CV. It monitors a customised set of companies and pulls roles directly from their job boards.
 
-This project builds on ideas from [career-ops](https://github.com/santifer/career-ops), particularly the multi-source scanning and ATS parsing structure. jobscan diverges in design by prioritising broader job discovery, more aggressive pre-filtering, and minimal per-role evaluation (single Yes/No decision).
+This project draws from [career-ops](https://github.com/santifer/career-ops) in parts of its scanning implementation — notably ATS detection, parsing patterns, and supporting utilities — but takes a fundamentally different approach at the system level. jobscan diverges in design by prioritising broader job discovery, more aggressive pre-filtering, and minimal per-role evaluation (single Yes/No decision).
 
 For me, 3 hours of manual browsing becomes ~20 minutes of focused review.
 

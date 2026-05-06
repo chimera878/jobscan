@@ -28,56 +28,38 @@ from urllib.request import Request, urlopen
 MAX_PAGES = 5
 PER_PAGE  = 50
 
-# Adzuna-supported country codes and their display names
-_SUPPORTED = {
-    "au": "Australia",
-    "at": "Austria",
-    "be": "Belgium",
-    "br": "Brazil",
-    "ca": "Canada",
-    "fr": "France",
-    "de": "Germany",
-    "in": "India",
-    "it": "Italy",
-    "mx": "Mexico",
-    "nl": "Netherlands",
-    "nz": "New Zealand",
-    "pl": "Poland",
-    "ru": "Russia",
-    "sg": "Singapore",
-    "za": "South Africa",
-    "gb": "United Kingdom",
-    "us": "United States",
-}
-
-# Map verbose location strings → Adzuna country codes
-_COUNTRY_CODE_MAP = {
-    "australia": "au", "au": "au",
-    "austria": "at", "at": "at",
-    "belgium": "be", "be": "be",
-    "brazil": "br", "brasil": "br", "br": "br",
-    "canada": "ca", "ca": "ca",
-    "france": "fr", "fr": "fr",
-    "germany": "de", "deutschland": "de", "de": "de",
-    "india": "in", "in": "in",
-    "italy": "it", "italia": "it", "it": "it",
-    "mexico": "mx", "méxico": "mx", "mx": "mx",
-    "netherlands": "nl", "holland": "nl", "nl": "nl",
-    "new zealand": "nz", "nz": "nz",
-    "poland": "pl", "polska": "pl", "pl": "pl",
-    "russia": "ru", "ru": "ru",
-    "singapore": "sg", "sg": "sg",
-    "south africa": "za", "za": "za",
-    "united kingdom": "gb", "great britain": "gb", "gb": "gb", "uk": "gb",
-    "england": "gb", "scotland": "gb", "wales": "gb",
-    "united states": "us", "usa": "us", "us": "us", "america": "us",
+# Maps user location string (lowercased) → (url_country_code, adzuna_where_param)
+# url_country_code: used in the API path  → .../jobs/{code}/search
+# adzuna_where_param: used as the 'where' query param — Adzuna rejects verbose names like "United Kingdom"
+_COUNTRIES = {
+    "australia":      ("au", "Australia"),  "au":          ("au", "Australia"),
+    "austria":        ("at", "Austria"),    "at":          ("at", "Austria"),
+    "belgium":        ("be", "Belgium"),    "be":          ("be", "Belgium"),
+    "brazil":         ("br", "Brazil"),     "brasil":      ("br", "Brazil"),     "br": ("br", "Brazil"),
+    "canada":         ("ca", "Canada"),     "ca":          ("ca", "Canada"),
+    "france":         ("fr", "France"),     "fr":          ("fr", "France"),
+    "germany":        ("de", "Germany"),    "deutschland": ("de", "Germany"),    "de": ("de", "Germany"),
+    "india":          ("in", "India"),      "in":          ("in", "India"),
+    "italy":          ("it", "Italy"),      "italia":      ("it", "Italy"),      "it": ("it", "Italy"),
+    "mexico":         ("mx", "Mexico"),     "méxico":      ("mx", "Mexico"),     "mx": ("mx", "Mexico"),
+    "netherlands":    ("nl", "Netherlands"),"holland":     ("nl", "Netherlands"),"nl": ("nl", "Netherlands"),
+    "new zealand":    ("nz", "New Zealand"),"nz":          ("nz", "New Zealand"),
+    "poland":         ("pl", "Poland"),     "polska":      ("pl", "Poland"),     "pl": ("pl", "Poland"),
+    "russia":         ("ru", "Russia"),     "ru":          ("ru", "Russia"),
+    "singapore":      ("sg", "Singapore"),  "sg":          ("sg", "Singapore"),
+    "south africa":   ("za", "South Africa"),"za":         ("za", "South Africa"),
+    "united kingdom": ("gb", "UK"),  "great britain": ("gb", "UK"),
+    "gb":             ("gb", "UK"),  "uk":            ("gb", "UK"),
+    "england":        ("gb", "UK"),  "scotland":      ("gb", "UK"),  "wales": ("gb", "UK"),
+    "united states":  ("us", "US"), "usa": ("us", "US"), "us": ("us", "US"), "america": ("us", "US"),
 }
 
 _debug = False
 
 
-def _get_country_code(location: str) -> str | None:
-    return _COUNTRY_CODE_MAP.get(location.lower().strip())
+def _resolve_location(location: str):
+    """Returns (url_code, where_param) tuple, or None if unsupported."""
+    return _COUNTRIES.get(location.lower().strip())
 
 
 def _load_keys() -> tuple:
@@ -171,9 +153,9 @@ def main():
     location = args[1]
     max_age  = int(args[2]) if len(args) > 2 else 5
 
-    country_code = _get_country_code(location)
-    if not country_code:
-        supported = ", ".join(sorted(_SUPPORTED.values()))
+    resolved = _resolve_location(location)
+    if not resolved:
+        supported = ", ".join(sorted(set(v[1] for v in _COUNTRIES.values())))
         print(
             f"[adzuna] unsupported region {location!r} — Adzuna is available in: {supported}",
             file=sys.stderr,
@@ -181,6 +163,7 @@ def main():
         print("[]", flush=True)
         return
 
+    country_code, where = resolved
     api_base = f"https://api.adzuna.com/v1/api/jobs/{country_code}/search"
 
     app_id, app_key = _load_keys()
@@ -195,7 +178,7 @@ def main():
     all_jobs = []
 
     for page in range(1, MAX_PAGES + 1):
-        data = fetch_page(api_base, app_id, app_key, query, location, max_age, page)
+        data = fetch_page(api_base, app_id, app_key, query, where, max_age, page)
 
         if "exception" in data:
             print(f"[adzuna] API error: {data['exception']}", file=sys.stderr)
